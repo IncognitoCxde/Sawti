@@ -19,14 +19,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var collectionView: UICollectionView!
     let recentTitle = UILabel()
     
-    private let customTabBar = CustomTabBarView()
-    
     private let tableView = UITableView()
-        private var books: [Book] = [
-            Book(name: "Sahih Al-Bukhari", author: "Imam Al Bukhari", imageName: "Sahih", isBookmarked: false, rating: 5.0),
-            Book(name: "1984", author: "George Orwell", imageName: "1984", isBookmarked: false, rating: 4.7),
-            Book(name: "A History Of Tajiks", author: "Richard Foltz", imageName: "Tajiks", isBookmarked: true, rating: 4.9)
-        ]
+    private var books: [Book] = [
+        Book(name: "Sahih Al-Bukhari", author: "Imam Al Bukhari", imageName: "Sahih", isBookmarked: false, rating: 5.0),
+        Book(name: "1984", author: "George Orwell", imageName: "1984", isBookmarked: false, rating: 4.7),
+        Book(name: "A History Of Tajiks", author: "Richard Foltz", imageName: "Tajiks", isBookmarked: true, rating: 4.9)
+    ]
     
     let categories = ["Self-Enlightment", "Culture & Society", "Fiction", "Mind & Philosophy", "Tajik-Persian Poetry", "Tajik History", "Education", "World History", "Islamic", "Technology"]
     
@@ -50,7 +48,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.identifier)
         
         view.addSubview(collectionView)
-    
+        
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(topicsTitle.snp.top).inset(35)
             make.leading.equalToSuperview().offset(20)
@@ -66,7 +64,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         configureNavTitle()
         configureLabels()
         configureSearchBar()
-        setupCustomTabBar()
         setupTableView()
         makeConstraints()
     }
@@ -80,41 +77,25 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         navigationController?.navigationBar.titleTextAttributes = textAttributes as [NSAttributedString.Key : Any]
     }
     
-    // MARK: - Tab Bar
-    
-    private func setupCustomTabBar() {
-        view.addSubview(customTabBar)
-        customTabBar.layer.cornerRadius = 20
-        customTabBar.layer.shadowOffset = CGSize(width: 0, height: 0)
-        customTabBar.layer.shadowRadius = 2
-        customTabBar.layer.shadowColor = UIColor.black.cgColor
-        customTabBar.layer.shadowOpacity = 0.3
-        customTabBar.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.right.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.height.equalTo(90)
-        }
-    }
-    
     // MARK: - TableView
     
     private func setupTableView() {
-            view.addSubview(tableView)
-            
-            tableView.snp.makeConstraints { make in
-                make.bottom.equalTo(customTabBar.snp.top)
-                make.leading.equalToSuperview().inset(15)
-                make.trailing.equalToSuperview().inset(15)
-                make.top.equalTo(recentTitle.snp.top).inset(25)
-            }
-            
-            tableView.backgroundColor = .clear
-            tableView.dataSource = self
-            tableView.delegate = self
-            tableView.separatorStyle = .none
-            tableView.register(BookTableViewCell.self, forCellReuseIdentifier: "BookTableViewCell")
+        view.addSubview(tableView)
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(recentTitle.snp.top).inset(30)
+            make.right.equalToSuperview().inset(15)
+            make.left.equalToSuperview().inset(15)
+            make.bottom.equalToSuperview()
         }
+        
+        tableView.backgroundColor = .clear
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.separatorStyle = .none
+        tableView.register(BookTableViewCell.self, forCellReuseIdentifier: "BookTableViewCell")
+        tableView.showsVerticalScrollIndicator = false
+    }
     
     // MARK: - Configuration
     
@@ -203,25 +184,29 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     // MARK: - UITableViewDataSource
-       
-       func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-           return books.count
-       }
-       
-       func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-           guard let cell = tableView.dequeueReusableCell(withIdentifier: "BookTableViewCell", for: indexPath) as? BookTableViewCell else {
-               return UITableViewCell()
-           }
-           
-           let book = books[indexPath.row]
-           cell.configure(with: book)
-           
-           return cell
-       }
-       
-       // MARK: - UITableViewDelegate
-       
-       func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-           return 130
-       }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return books.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "BookTableViewCell", for: indexPath) as? BookTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let book = books[indexPath.row]
+        cell.configure(with: book)
+        
+        return cell
+    }
+    
+    // MARK: - UITableViewDelegate
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 130
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
